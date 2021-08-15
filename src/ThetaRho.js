@@ -13,19 +13,9 @@ class ThetaRho {
     var theta;
     var current_theta;
     var previous_theta;
-    var previous_theta_offset;
     var delta_theta;
 
     var rho;
-    var current_rho;
-    var previous_rho;
-    var previous_rho_offset;
-
-    var theta_offset = 0;
-
-    var theta_direction;
-
-    var sub_steps = new Array();
 
     // Rotate the path by a quarter revolution
     path = this.ThrRotatePath(path, Math.PI/2);
@@ -35,20 +25,20 @@ class ThetaRho {
 
     // Calculate the radius
     let max_radius = 0.0;
-    let bbox = this.boundingBox(path)
+    let bbox = this.boundingBox(path);
     let center_point = [
       bbox[0][0] + (bbox[0][1] - bbox[0][0])/2,
       bbox[1][0] + (bbox[1][1] - bbox[1][0])/2,
-    ]
+    ];
     for (let point of path) {
-      let distance_from_center = this.distance(point, center_point)
+      let distance_from_center = this.distance(point, center_point);
       if (distance_from_center > max_radius) {
         max_radius = distance_from_center;
       }
     }
 
     // Initialize thetaRho command string with the standard header
-    var thetaRho = new Array();
+    var thetaRho = [];
 
     // Subdivide Path to increase smoothness
     path = this.subdividePath(path, max_segment_length);
@@ -58,16 +48,16 @@ class ThetaRho {
     // to the previous Theta position.
     previous_theta = this.calcTheta(path[0][0], path[0][1]);
     thetaRho.push(
-      previous_theta.toFixed(4)
-      + " "
-      + this.calcRho(path[0][0], path[0][1], max_radius).toFixed(4)
+      previous_theta.toFixed(4) +
+      " " +
+      this.calcRho(path[0][0], path[0][1], max_radius).toFixed(4)
     );
 
     // Loop through the rest of the path coordinates
     for (let i = 1; i < path.length; i++) {
 
       // Calculate current Theta from 0 to 2-Pi
-      current_theta = this.calcTheta(path[i][0], path[i][1])
+      current_theta = this.calcTheta(path[i][0], path[i][1]);
 
       // Add on the full rotations previously completed
       current_theta += Math.floor(previous_theta / (2 * Math.PI)) * (2 * Math.PI);
@@ -132,7 +122,7 @@ class ThetaRho {
       return [
         a[0] * Math.cos(theta) - a[1] * Math.sin(theta),
         a[0] * Math.sin(theta) + a[1] * Math.cos(theta)
-      ]
+      ];
     });
   }
 
@@ -144,7 +134,7 @@ class ThetaRho {
    **/
   subdividePath(path, max_segment_length) {
 
-    let new_path = new Array();
+    let new_path = [];
     let delta_x, delta_y;
 
     // Loop through path coordinates
@@ -155,9 +145,7 @@ class ThetaRho {
       delta_x = path[i+1][0] - path[i][0];
       delta_y = path[i+1][1] - path[i][1];
       let delta_distance = Math.sqrt(
-        Math.pow(delta_x, 2)
-        +
-        Math.pow(delta_y, 2)
+        Math.pow(delta_x, 2) + Math.pow(delta_y, 2)
       );
 
       // Calculate the number of steps by which to divide the distance
@@ -218,7 +206,7 @@ class ThetaRho {
   // Helper methods
 
   distance(p1, p2) {
-    return Math.sqrt(Math.pow(p2[0] - p1[0], 2) + Math.pow(p2[1] - p1[1], 2))
+    return Math.sqrt(Math.pow(p2[0] - p1[0], 2) + Math.pow(p2[1] - p1[1], 2));
   }
 
   /**
@@ -251,7 +239,7 @@ class ThetaRho {
     return [
       this.arrayMin(x_coordinates),
       this.arrayMin(y_coordinates),
-    ]
+    ];
   }
 
   /**
@@ -263,7 +251,7 @@ class ThetaRho {
     return [
       this.arrayMax(x_coordinates),
       this.arrayMax(y_coordinates),
-    ]
+    ];
   }
 
   /**
@@ -275,8 +263,8 @@ class ThetaRho {
     return [
       [mins[0], maxs[0]],
       [mins[1], maxs[1]]
-    ]
+    ];
   }
 }
 
-module.exports = ThetaRho
+module.exports = ThetaRho;
