@@ -3,7 +3,7 @@
 Convert a polyline (a series of points) from one format to another.
 
 This initial version converts a CSV file of rectangular (Cartesian) coordinates
-to the polar "Theta-Rho" notation used by (Sisyphus Tables)[https://sisyphus-industries.com].
+to the polar "Theta-Rho" notation used by [Sisyphus Tables](https://sisyphus-industries.com).
 
 In future versions I plan to offer:
 - Theta-Rho to rectangular conversion in CSV, JSON and G-code formats.
