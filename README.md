@@ -13,6 +13,8 @@ I may also support rectangular reformatting for CSV to JSON and vice versa.
 
 ## Important Note about Rectangular to Theta-Rho Conversion
 
+![Rectangular to THR Conversion](documentation/rect-to-thr.gif)
+
 When converting from the x/y position of rectangular coordinates to the
 angle/radius position of polar/Theta-Rho coordinates it is important to remember
 that a straight line between two rectangular points will not be a straight line
