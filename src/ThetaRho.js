@@ -100,6 +100,69 @@ class ThetaRho {
   }
 
   /**
+   * Convert Theta-Rho coordinates into rectangular coordinates
+   * thr_path An array of [theta,rho] coordinates
+   * width Width of path-drawing area
+   * height Height of path-drawing area
+   **/
+  toRectangular(thr_path, width = 100, height = 100) {
+
+    // Set initial values
+    let path = [];
+
+    const max_r = Math.min(width, height) / 2;
+
+    // Convert starting point from Theta-Rho to XY
+    for (let point of thr_path) {
+      path.push([
+        max_r * point[1] * Math.cos(point[0]),
+        max_r * point[1] * Math.sin(point[0])
+      ]);
+    }
+
+    // Rotate the path by a quarter revolution
+    path = this.rotatePath(path, Math.PI/2);
+
+    // Flip on the X axis
+    path = this.scalePath(path, [-1, 1]);
+
+    return path;
+  }
+
+  /**
+   * Convert Theta-Rho coordinates into G-code coordinates
+   * thr_path An array of [theta,rho] coordinates
+   * width Width of path-drawing area
+   * height Height of path-drawing area
+   **/
+  toGcode(thr_path, width = 100, height = 100) {
+
+    // Set initial values
+    let path = [];
+
+    const max_r = Math.min(width, height) / 2;
+
+    // Convert starting point from Theta-Rho to XY
+    for (let point of thr_path) {
+      path.push([
+        max_r * point[1] * Math.cos(point[0]),
+        max_r * point[1] * Math.sin(point[0])
+      ]);
+    }
+
+    // Rotate the path by a quarter revolution
+    path = this.rotatePath(path, Math.PI/2);
+
+    // Flip on the X axis
+    path = this.scalePath(path, [-1, 1]);
+
+    // Translate the path
+    path = this.translatePath(path, [width / 2, height / 2]);
+
+    return path;
+  }
+
+  /**
    * Scale Path
    * path An array of [x,y] coordinates
    * scale An array of [x,y] scale factors
@@ -124,6 +187,76 @@ class ThetaRho {
         a[0] * Math.sin(theta) + a[1] * Math.cos(theta)
       ];
     });
+  }
+
+  /**
+   * Scale a Path with respect to the origin
+   * @param {array} path - A Path array.
+   * @param {number|number[]} scale - The amount by which to scale
+   * the path. A single numeric value can be applied to all dimensions
+   * or a value can be provided for each dimension
+   * @returns {array} A Path array
+   **/
+  scalePath(path, scale) {
+    let scale_x = scale;
+    let scale_y = scale;
+    if (scale.length !== undefined) {
+      scale_x = scale[0];
+      scale_y = scale[1];
+    }
+    return path.map(function(a){
+      let scaled = [
+        a[0] * scale_x,
+        a[1] * scale_y
+      ];
+      return scaled;
+    });
+  }
+
+  /**
+   * Translate a path
+   * @param {array} path - A Path array
+   * @param {number[]} delta - The amount by which to move
+   * the path in each dimension
+   * @returns {array} A Path array
+   **/
+  translatePath(path, delta) {
+    return path.map(function(a){
+      return [
+        a[0] + delta[0],
+        a[1] + delta[1]
+      ];
+    });
+  }
+
+  /**
+   * Rotate Path by angle theta around a center point ([0,0] by default)
+   * @param {array} path - A Path array
+   * @param {number} theta - The number of radians to
+   * rotate the path. Positive rotation is clockwise.
+   * @param {array[]} center - A Point array. The point around which to rotate.
+   * @returns {array} A Path array
+   **/
+  rotatePath(path, theta, center = [0,0]) {
+    return path.map(function(a){
+      return this.rotatePoint(a, theta, center);
+    }, this);
+  }
+
+  /**
+   * Rotate a point around another point
+   * Reference: https://danceswithcode.net/engineeringnotes/rotations_in_2d/rotations_in_2d.html
+   * @param {array} point - A Point array
+   * @param {number} theta - The number of radians to
+   * rotate the path. Positive rotation is clockwise.
+   * @param {array[]} center - A Point array. The point around which to rotate.
+   * @returns {array} A Point array
+   **/
+  rotatePoint(point, theta, center = [0,0]) {
+    return [
+      (point[0] - center[0]) * Math.cos(theta) - (point[1] - center[1]) * Math.sin(theta) + center[0],
+      (point[0] - center[0]) * Math.sin(theta) + (point[1] - center[1]) * Math.cos(theta) + center[1]
+    ];
   }
 
   /**
