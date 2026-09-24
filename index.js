@@ -7,7 +7,7 @@ const argv = yargs(hideBin(process.argv)).argv;
 
 // Requirements
 var fs = require('fs');
-var parse = require('csv-parse');
+const { parse } = require('csv-parse');
 // var stringify = require('csv-stringify');
 const ThetaRho = require('./src/ThetaRho.js');
 
